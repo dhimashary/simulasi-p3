@@ -5,7 +5,8 @@ import {
   SET_TASKS,
   SET_ERROR,
   CREATE_TASKS,
-  DELETE_TASKS
+  DELETE_TASKS,
+  SET_CURRENT_PAGE
 } from "./actionTypes";
 
 const initialState = {
@@ -23,6 +24,8 @@ function reducer(state = initialState, action) {
   switch (type) {
     case SET_FETCHED:
       return { ...state, isFetched: payload };
+    case SET_CURRENT_PAGE:
+        return { ...state, currentPage: payload };
     case SET_ISLOADING:
       return { ...state, isLoading: payload };
     case SET_ISERROR:

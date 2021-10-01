@@ -5,7 +5,8 @@ import {
   SET_ISERROR,
   SET_ERROR,
   CREATE_TASKS,
-  DELETE_TASKS
+  DELETE_TASKS,
+  SET_CURRENT_PAGE
 } from "./actionTypes";
 
 const baseUrl = "http://localhost:3002"
@@ -34,6 +35,13 @@ export function setIsError(payload) {
 export function setError(payload) {
   return {
     type: SET_ERROR,
+    payload: payload
+  };
+}
+
+export function setCurrentPage(payload) {
+  return {
+    type: SET_CURRENT_PAGE,
     payload: payload
   };
 }
@@ -68,7 +76,6 @@ export function getTasks() {
         return res.json()
       })
       .then((data) => {
-        console.log(data, "<------")
         dispatch(setTasks(data));
         dispatch(setIsFetch(true));
       })
@@ -120,3 +127,4 @@ export function deleteTaskAsync(id) {
     });
   }
 };
+

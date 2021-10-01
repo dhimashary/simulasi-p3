@@ -5,10 +5,11 @@ import TaskList from "../components/TaskList";
 
 export default function Home() {
   const dispatch = useDispatch();
+  const currentPage = useSelector(state => state.currentPage)
 
   useEffect(() => {
     dispatch(getTasks());
-  }, [dispatch]);
+  }, [dispatch, currentPage]);
 
   return (
     <div className="col-9">
