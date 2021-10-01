@@ -82,6 +82,16 @@ export function getTasks() {
   };
 }
 
+export function getFilteredTasks(category) {
+  return (dispatch) => {
+    fetch(`${baseUrl}/tasks?category=${category}`)
+      .then(res => res.json())
+      .then(data => {
+        dispatch(setTasks(data))
+      })
+  }
+}
+
 export function createTaskAsync(formInput) {
   return function(dispatch) {
     dispatch(setIsLoading(true))
