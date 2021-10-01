@@ -8,6 +8,8 @@ import {
   DELETE_TASKS
 } from "./actionTypes";
 
+const baseUrl = "http://localhost:3002"
+
 export function setIsFetch(payload) {
   return {
     type: SET_FETCHED,
@@ -59,42 +61,34 @@ export function deleteTask(payload) {
 
 export function getTasks() {
   return function (dispatch, getState) {
-    const baseUrl = "";
-
-    if (getState().isFetched) {
-      return;
-    } else {
-      fetchData();
-    }
-
-    function fetchData() {
-      dispatch(setIsLoading(true));
-      fetch(baseUrl)
-        .then((res) => res.json())
-        .then((data) => {
-          dispatch(setTasks(data));
-          dispatch(setIsFetch(true));
-        })
-        .catch((err) => {
-          dispatch(setIsError(true));
-          dispatch(setError(err.message));
-        })
-        .finally((_) => {
-          dispatch(setIsLoading(false));
-        });
-    }
+    dispatch(setIsLoading(true))
+    const { currentPage } = getState()
+    fetch(`${baseUrl}/tasks?_page=${currentPage}&_limit=5&_sort=id&_order=desc`)
+      .then((res) => {
+        return res.json()
+      })
+      .then((data) => {
+        console.log(data, "<------")
+        dispatch(setTasks(data));
+        dispatch(setIsFetch(true));
+      })
+      .catch((err) => {
+        dispatch(setIsError(true));
+        dispatch(setError(err.message));
+      })
+      .finally((_) => {
+        dispatch(setIsLoading(false));
+      });
   };
 }
 
-export function createTask(payload) {
-  return function (dispatch) {
-    const baseUrl = "";
-
-    dispatch(setIsLoading(true));
-    fetch(baseUrl, {
+export function createTaskAsync(formInput) {
+  return function(dispatch) {
+    dispatch(setIsLoading(true))
+    return fetch(`${baseUrl}/tasks`, {
       method: "POST",
       headers: { "Content-type": "application/json; charset=UTF-8" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(formInput)
     })
       .then((res) => res.json())
       .then((data) => {
@@ -107,27 +101,22 @@ export function createTask(payload) {
       .finally((_) => {
         dispatch(setIsLoading(false));
       });
-  };
-}
+  }
+};
 
-export function deleteTask(id) {
-  return function (dispatch, getState) {
-    const baseUrl = "";
-
-    dispatch(setIsLoading(true));
-    fetch(`${baseUrl}/${id}`, { method: "DELETE" })
-      .then((res) => res.json())
-      .then((_) => {
-        const currentState = JSON.parse(JSON.stringify(getState()));
-        const newState = currentState.filter((state) => state.id !== id);
-        dispatch(setTasks(newState));
-      })
-      .catch((err) => {
-        dispatch(setIsError(true));
-        dispatch(setError(err.message));
-      })
-      .finally((_) => {
-        dispatch(setIsLoading(false));
-      });
-  };
-}
+export function deleteTaskAsync(id) {
+  return function (dispatch) {
+    return fetch(`${baseUrl}/tasks/${id}`, { method: "DELETE" })
+    .then((res) => res.json())
+    .then((_) => {
+      dispatch(deleteTask(id));
+    })
+    .catch((err) => {
+      dispatch(setIsError(true));
+      dispatch(setError(err.message));
+    })
+    .finally((_) => {
+      dispatch(setIsLoading(false));
+    });
+  }
+};

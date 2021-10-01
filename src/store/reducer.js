@@ -10,10 +10,12 @@ import {
 
 const initialState = {
   tasks: [],
+  currentPage: 1,
+  lastPage: 3,
   isLoading: true,
   isError: false,
   error: null,
-  isFetched: true
+  isFetched: false
 };
 
 function reducer(state = initialState, action) {
@@ -30,7 +32,10 @@ function reducer(state = initialState, action) {
     case SET_TASKS:
       return { ...state, tasks: payload };
     case CREATE_TASKS:
-      return { ...state, tasks: payload };
+      return { ...state, tasks: [payload, ...state.tasks] };
+    case DELETE_TASKS:
+      const newTask = state.tasks.filter((task) => task.id !== payload);
+      return { ...state, tasks: newTask };
     default:
       return state;
   }
